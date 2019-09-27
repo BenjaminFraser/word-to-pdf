@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <title>Word to PDF Converter</title>
+
+    <!-- Bootstrap basic CSS-->
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+
+    <!-- Font awesome CSS -->
+     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+
+    <!-- Flask static styling folder -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <!-- Google Custom Fonts -->
+    <link href="http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    </head>
+
+    <body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
+  
+        <!-- Navigation -->
+        <nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand page-scroll" href="{{ url_for('home_page') }}">
+                        <span class="logo-yellow"> <i class="fas fa-file-pdf"></i> Word to PDF</span> Converter </a>
+                    <a class="navbar-brand" href="{{ url_for('login_page') }}">| &nbsp; Log In</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- flash messages if they have been raised -->
+        <hr>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+
+        <div class="container">
+            {% block content %}
+            {% endblock %}
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <div class="container text-center">
+                <p>Created by Benjamin D Fraser 2019</p>
+            </div>
+        </footer>
+
+
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="{{ url_for('static', filename='js/jquery-3.1.1.min.js') }}"></script>
+       
+        <script type="text/javascript">
+
+            $(".contentContainer").css("min-height", $(window).height());
+
+        </script>
+
+        <!-- Bootstrap core JavaScript -->
+        <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+
+        <!-- Custom JS scripts for page functionality -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.js"></script>
+        <script src="{{url_for('static', filename='js/custom.js')}}"></script>
+
+        <script type="text/javascript">
+            $(document).on('click', '[data-toggle="lightbox"]', function(event) {
+                event.preventDefault();
+            $(this).ekkoLightbox();
+            });
+        </script>
+
+        </body>
+</html>

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <!-- WTForms sign-in template -->
+    <h1>Sign In</h1>
+    <!-- novalidate to allow server side authentication -->
+    <form action="" method="post" novalidate>
+        <!-- generate token from SECRET_KEY to protect against CSRF attacks -->
+        {{ form.hidden_tag() }}
+        <p>
+            <!-- generate form fields and classes for each -->
+            {{ form.username.label }}<br>
+            {{ form.username(size=32) }}
+
+            <!-- Display input errors to user if incorrect -->
+            {% for error in form.username.errors %}
+            <span style="color: red;"><---[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.password.label }}<br>
+            {{ form.password(size=32) }}
+            {% for error in form.password.errors %}
+            <span style="color: red;"><---[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
+        <p>{{ form.submit() }}</p>
+    </form>
+{% endblock %}

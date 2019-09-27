@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Header section for page -->
+<div class="row top-menu">
+    <div class="col-md-12 col-lg-12 text-center">
+        <button onclick="toggle_left_panel()" class="btn btn-success">Toggle Display</button>
+  </div>
+</div>
+
+<div class="row divider metallic padding-none margin-bottom">
+    <div class="col-md-12"></div>
+</div>
+
+
+<!-- Main page content for zipped directory uploads and displaying converted files -->
+<div class="row">
+  <div class="col-md-12">
+    <p> Upload a zipped file containing a single or multi-layered directory of word/excel files. These will be converted into pdf documents, and combined into one large, single, searchable pdf. Ensure documents and folders have naming conventions that allow them to be sorted numerically and combined for the correct ordering.</p>
+  </div>
+</div>
+
+<div class="row divider metallic padding-none margin-bottom">
+    <div class="col-md-12"></div>
+</div>
+
+<div class="row">
+  <div id="left_panel" class="col-md-6">
+    <div>
+      <div class="text-center">
+        <h3>Upload zipped directory:</h3>
+      </div>
+        <!-- image upload part -->
+        <div id="upload" class="row">
+          <div class="col text-center">
+          <form method=post action={{ url_for('upload_file') }} enctype=multipart/form-data>
+            <div class='form-group'>
+              <label class="btn btn-default btn-file">
+                  Browse <input type="file" name=file style="display: none;" onchange="this.form.submit();"></input>
+              </label>
+              <button type="submit" value=Upload style="display: none;"></button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+        <!-- prediction -->
+        {% if show_image %}
+          <div id="prediction" class="row">
+            <div class="col-md-12 text-center">
+                <h4>
+                    <span style="color:red">Breed: {{labels['label_1'][0]}}</span>
+                </h4>
+            </div>
+          </div>
+          <!-- render uploaded image -->
+          <div class="row" style="margin-top: 15px">
+            <div class="col-sm-12 col-md-12">
+              <a href="{{cur_image_path}}" data-toggle="lightbox">
+                <img class="img-responsive uploaded centered" src="{{cur_image_path}}" >
+              </a>
+            </div>
+          </div>
+        {% endif %}
+
+    </div>
+  </div>
+
+  <!-- gallery part -->
+  <div id="right_panel" class="col-md-6">
+      <div class="text-center">
+        <h3>Recent files:</h3>
+      </div>
+      <div class="row gal">
+        {% for filename in files %}
+          <div class="col-md-6 col-sm-6 col-xs-6" style="margin-top: 10px;">
+            <div class="text-center">
+              <p><span style="color:blue">{{filename}}</span></p>
+            </div>
+
+            <div class="text-center">
+                <a href="{{url_for('static', filename='images/pdf_image.png')}}" data-toggle="lightbox"
+                data-title="{{filename}}" data-footer="{{filename}}">
+                <img class="img-responsive gal img-gal" src="{{url_for('static', filename='images/pdf_image.png')}}" height="150px" width="150px">
+                </a>
+            </div>
+            <div class="text-center">
+                <a href="{{ url_for('download_file', path=filename)}}" class="btn btn-default">Download</a>
+            </div>
+          </div>
+      </div>
+
+        {% endfor %}
+
+      </div>
+  </div>
+</div>
+
+{% endblock %}

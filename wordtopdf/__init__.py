@@ -43,6 +43,7 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 from wordtopdf import views
 from wordtopdf import conversions
 from wordtopdf import combinations
+from wordtopdf import models
 
 
 # Generate a random string token for CSRF protection on selected POST views.

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from datetime import datetime
 from wordtopdf import db
 
 class User(db.Model):

@@ -3,6 +3,7 @@
 from config import Config
 from flask import Flask
 from flask_bootstrap import Bootstrap
+from flask_login import LoginManager
 from flask import session as login_session
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -18,6 +19,7 @@ import os
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
+login = LoginManager(app)
 
 # import config and create db and migrate instances
 app.config.from_object(Config)

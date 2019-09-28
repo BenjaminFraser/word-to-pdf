@@ -4,6 +4,7 @@ from datetime import datetime
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from wordtopdf import db
+from wordtopdf import login
 
 
 class User(UserMixin, db.Model):
@@ -26,6 +27,11 @@ class User(UserMixin, db.Model):
         """ Verifies the given password is correct for the stored password hash """
         return check_password_hash(self.password_hash, password)
 
+
+@login.user_loader
+def load_user(id):
+    """ User loader function for flask-login to obtain a user id """
+    return User.query.get(int(id))
 
 
 class Upload(db.Model):

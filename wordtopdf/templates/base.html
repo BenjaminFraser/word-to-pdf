@@ -38,7 +38,12 @@
                 <div class="navbar-header">
                     <a class="navbar-brand page-scroll" href="{{ url_for('home_page') }}">
                         <span class="logo-yellow"> <i class="fas fa-file-pdf"></i> Word to PDF</span> Converter </a>
+
+                    {% if current_user.is_authenticated %}
+                    <a class="navbar-brand" href="{{ url_for('logout') }}">| &nbsp; Log Out</a>
+                    {% else %}
                     <a class="navbar-brand" href="{{ url_for('login_page') }}">| &nbsp; Log In</a>
+                    {% endif %}
                 </div>
             </div>
         </nav>

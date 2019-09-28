@@ -1,22 +1,26 @@
 #!/usr/bin/env python
 
-from werkzeug.utils import secure_filename
 from flask import Flask, render_template, flash, request, \
         url_for, redirect, jsonify, send_from_directory
 from flask_bootstrap import Bootstrap
+from flask_login import current_user, login_user, logout_user, login_required
 from io import open
-from PyPDF2 import PdfFileMerger, PdfFileReader
-import sys
-import subprocess
-import shutil
-import re
 import os
+from PyPDF2 import PdfFileMerger, PdfFileReader
+import re
+import shutil
+import subprocess
+import sys
+from werkzeug.urls import url_parse
+from werkzeug.utils import secure_filename
 import zipfile
 
 from wordtopdf import app
 from wordtopdf import conversions
 from wordtopdf import combinations
+from wordtopdf import db
 from wordtopdf.forms import LoginForm
+from wordtopdf.models import User
 
 ## Future functionality - database support
 # Connect to Database and create database session
@@ -31,11 +35,9 @@ from wordtopdf.forms import LoginForm
 def home_page():
     """ Render the main app page """
     files = list_conversions()
-    print(app.config['UPLOAD_FOLDER'])
     return render_template('index.html', files=files)
 
 
-@app.route("/files")
 def list_conversions():
     """ List conversion files on the server. """
     files = []
@@ -52,6 +54,7 @@ def allowed_file(filename):
 
 
 @app.route('/upload', methods=['GET', 'POST'])
+@login_required
 def upload_file():
     """ Upload a given zipped file """
     if request.method == 'POST':
@@ -94,23 +97,67 @@ def upload_file():
 
             return redirect(url_for('upload_file',
                                     filename=filename))
-    files = list_conversions()
-    return render_template('index.html', files=files)
+    return redirect(url_for('home_page'))
 
 
 @app.route("/download/<path:path>")
+@login_required
 def download_file(path): 
     """ Download the chosen pdf file. """
     # Warning - the file for send_from_directory needs to be an absolute path
     return send_from_directory(directory=app.config['UPLOAD_FOLDER'], filename=path, as_attachment=True)
 
 
+@app.route("/delete/<path:path>", methods=['GET', 'POST'])
+@login_required
+def delete_file(path):
+    """ Delete the selected file, removing it physically and updating the database accordingly """
+    chosen_file = Upload.query.filter_by(filename=path).first()
+    uploaded_files = list_conversions()
+    if chosen_file is None or current_user.is_anonymous or chosen_file.filename not in uploaded_files:
+        flash("Oops - either the file does not exist, or you do not have permission for this action.")
+        return redirect(url_for('home_page'))
+
+    # remove the chosen file physically from the file system
+    os.remove(os.path.join(app.config['UPLOAD_FOLDER'], chosen_file.filename))
+
+    # remove the chosen file from the database
+    db.session.delete(chosen_file)
+    db.session.commit()
+
+    flash("File successfully deleted.")
+    
+    return redirect(url_for('home_page'))
+
+
+
 @app.route("/login", methods=['GET', 'POST'])
 def login_page(): 
     """ Display a page for user login to the application. """
+    # if current user is already authenticated, load home page
+    if current_user.is_authenticated:
+        return redirect(url_for('home_page'))
     form = LoginForm()
     if form.validate_on_submit():
         ### functionality for a user to log into the application
-        flash("Login requested for user: {0}, remember me: {1}".format(form.username.data, form.remember_me.data))
-        return redirect('/')
+        user = User.query.filter_by(username=form.username.data).first()
+        print(user)
+        if user is None or not user.check_password(form.password.data):
+            flash("Invalid username or password, please try again.")
+            return redirect(url_for('login_page'))
+        login_user(user, remember=form.remember_me.data)
+        # navigate to next page parameter, as given by flask-login @login_required
+        next_page = request.args.get('next')
+        # parse next page using werkzeugs url parse
+        if not next_page or url_parse(next_page).netloc != '':
+            next_page = url_for('home_page')
+        flash("Welcome back {0}".format(form.username.data))
+        return redirect(url_for('home_page'))
     return render_template('login.html', title='Sign In', form=form)
+
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    flash("Successfully logged out.")
+    return redirect(url_for('home_page'))

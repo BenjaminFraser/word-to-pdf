@@ -130,7 +130,6 @@ def delete_file(path):
     return redirect(url_for('home_page'))
 
 
-
 @app.route("/login", methods=['GET', 'POST'])
 def login_page(): 
     """ Display a page for user login to the application. """

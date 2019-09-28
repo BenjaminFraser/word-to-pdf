@@ -42,10 +42,7 @@ app.config['ALLOWED_EXTENSIONS'] = set(['zip'])
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
 
-from wordtopdf import views
-from wordtopdf import conversions
-from wordtopdf import combinations
-from wordtopdf import models
+from wordtopdf import views, conversions, combinations, models, errors
 
 
 # Generate a random string token for CSRF protection on selected POST views.

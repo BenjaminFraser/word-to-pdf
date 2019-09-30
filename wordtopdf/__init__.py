@@ -9,6 +9,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 #from sqlalchemy import create_engine
 #from sqlalchemy.orm import sessionmaker
+import logging
+from logging.handlers import RotatingFileHandler
 import string
 import sys
 import subprocess
@@ -53,3 +55,18 @@ def generate_csrf_token():
     return login_session['_csrf_token']
 
 app.jinja_env.globals['csrf_token'] = generate_csrf_token
+
+
+# if debug mode is not activated, log errors to a logging file
+if not app.debug:
+    if not os.path.exists('logs'):
+        os.mkdir('logs')
+    file_handler = RotatingFileHandler('logs/wordtopdf.log', maxBytes=10240,
+                                       backupCount=10)
+    file_handler.setFormatter(logging.Formatter(
+        '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
+    file_handler.setLevel(logging.INFO)
+    app.logger.addHandler(file_handler)
+
+    app.logger.setLevel(logging.INFO)
+    app.logger.info('Wordtopdf startup')

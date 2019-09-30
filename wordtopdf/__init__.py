@@ -61,6 +61,7 @@ app.jinja_env.globals['csrf_token'] = generate_csrf_token
 if not app.debug:
     if not os.path.exists('logs'):
         os.mkdir('logs')
+    # limit size of the logging file to 10kb, and keep last 10 as backup
     file_handler = RotatingFileHandler('logs/wordtopdf.log', maxBytes=10240,
                                        backupCount=10)
     file_handler.setFormatter(logging.Formatter(

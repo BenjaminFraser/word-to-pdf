@@ -70,4 +70,4 @@ def combine_conversions(target_directory, ordering_list, file_name):
     # write our final pdf with the appended pdf files
     merger.write(app.config['UPLOAD_FOLDER'] + "/" + pdf_name)
     
-    return None
+    return pdf_name

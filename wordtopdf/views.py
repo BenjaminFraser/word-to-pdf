@@ -20,7 +20,7 @@ from wordtopdf import conversions
 from wordtopdf import combinations
 from wordtopdf import db
 from wordtopdf.forms import LoginForm
-from wordtopdf.models import User
+from wordtopdf.models import User, Upload
 
 ## Future functionality - database support
 # Connect to Database and create database session
@@ -56,7 +56,7 @@ def allowed_file(filename):
 @app.route('/upload', methods=['GET', 'POST'])
 @login_required
 def upload_file():
-    """ Upload a given zipped file """
+    """ Upload a given zipped file - ## TO-DO: this function needs splitting into multiple functions """
     if request.method == 'POST':
         # check if the post request has the file part
         if 'file' not in request.files:
@@ -88,12 +88,17 @@ def upload_file():
 
             # combine all pdfs into one large file
             ordered_pdf_conversions = combinations.combine_directory(dest_folder)
-            combinations.combine_conversions(dest_folder, ordered_pdf_conversions, filename)
+            final_name = combinations.combine_conversions(dest_folder, ordered_pdf_conversions, filename)
 
             # delete the source and destination folders, and original zip file
             shutil.rmtree(source_folder)
             shutil.rmtree(dest_folder)
             os.remove(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+            # update the database with the file and the user who uploaded
+            uploaded = Upload(filename=final_name, user_id=current_user.id)
+            db.session.add(uploaded)
+            db.session.commit()
 
             return redirect(url_for('upload_file',
                                     filename=filename))

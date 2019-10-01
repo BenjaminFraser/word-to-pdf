@@ -44,24 +44,6 @@
         </div>
       </div>
 
-        <!-- prediction -->
-        {% if show_image %}
-          <div id="prediction" class="row">
-            <div class="col-md-12 text-center">
-                <h4>
-                    <span style="color:red">Breed: {{labels['label_1'][0]}}</span>
-                </h4>
-            </div>
-          </div>
-          <!-- render uploaded image -->
-          <div class="row" style="margin-top: 15px">
-            <div class="col-sm-12 col-md-12">
-              <a href="{{cur_image_path}}" data-toggle="lightbox">
-                <img class="img-responsive uploaded centered" src="{{cur_image_path}}" >
-              </a>
-            </div>
-          </div>
-        {% endif %}
 
     </div>
   </div>
@@ -73,6 +55,9 @@
       </div>
       <div class="row gal">
         {% for filename in files %}
+
+          {% set parsed_name = filename.replace(".pdf", "").replace("_", "") %}
+
           <div class="col-md-6 col-sm-6 col-xs-6" style="margin-top: 10px;">
             <div class="text-center">
               <p><span style="color:blue">{{filename}}</span></p>
@@ -86,14 +71,39 @@
             </div>
             <div class="text-center">
                 <a href="{{ url_for('download_file', path=filename)}}" class="btn btn-success">Download</a>
-                <a href="{{ url_for('delete_file', path=filename)}}" class="btn btn-danger">Delete</a>
+
+                <!-- Trigger modal with button -->
+                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteWarning{{parsed_name}}">Delete</button>
             </div>
           </div>
       </div>
 
+            <div class="modal fade" id="deleteWarning{{parsed_name}}">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="deleteWarningTitle{{filename}}">Deleting File Permanently:</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <h5>{{filename}}</h5>
+                  <p>Are you sure?</p>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+
+                  <form action="{{url_for('delete_file', path=filename)}}" method="post">
+                    <input type="submit" value="Delete" class="btn btn-danger">
+                  </form>
+                </div>
+              </div>
+            </div>
+      </div>
+
         {% endfor %}
 
-      </div>
   </div>
 </div>
 

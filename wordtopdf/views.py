@@ -72,33 +72,39 @@ def upload_file():
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-            # create source and destination directories
-            source_folder = os.path.join(app.config['UPLOAD_FOLDER'], 'source')
-            os.makedirs(source_folder, exist_ok=True)
-            dest_folder = os.path.join(app.config['UPLOAD_FOLDER'], 'destination')
-            os.makedirs(dest_folder, exist_ok=True)
+            try: 
+                # create source and destination directories
+                source_folder = os.path.join(app.config['UPLOAD_FOLDER'], 'source')
+                os.makedirs(source_folder, exist_ok=True)
+                dest_folder = os.path.join(app.config['UPLOAD_FOLDER'], 'destination')
+                os.makedirs(dest_folder, exist_ok=True)
 
-            # create the zip object and extract into the source folder
-            zip_ref = zipfile.ZipFile(os.path.join(app.config['UPLOAD_FOLDER'], filename), 'r')
-            zip_ref.extractall(source_folder)
-            zip_ref.close()
+                # create the zip object and extract into the source folder
+                zip_ref = zipfile.ZipFile(os.path.join(app.config['UPLOAD_FOLDER'], filename), 'r')
+                zip_ref.extractall(source_folder)
+                zip_ref.close()
 
-            # convert source recursive directory into pdf files
-            conversions.convert_recursive_directory(dest_folder, source_folder)
+                # convert source recursive directory into pdf files
+                conversions.convert_recursive_directory(dest_folder, source_folder)
 
-            # combine all pdfs into one large file
-            ordered_pdf_conversions = combinations.combine_directory(dest_folder)
-            final_name = combinations.combine_conversions(dest_folder, ordered_pdf_conversions, filename)
+                # combine all pdfs into one large file
+                ordered_pdf_conversions = combinations.combine_directory(dest_folder)
+                final_name = combinations.combine_conversions(dest_folder, ordered_pdf_conversions, filename)
 
-            # delete the source and destination folders, and original zip file
-            shutil.rmtree(source_folder)
-            shutil.rmtree(dest_folder)
-            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                # delete the source and destination folders, and original zip file
+                shutil.rmtree(source_folder)
+                shutil.rmtree(dest_folder)
+                os.remove(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-            # update the database with the file and the user who uploaded
-            uploaded = Upload(filename=final_name, user_id=current_user.id)
-            db.session.add(uploaded)
-            db.session.commit()
+                # update the database with the file and the user who uploaded
+                uploaded = Upload(filename=final_name, user_id=current_user.id)
+                db.session.add(uploaded)
+                db.session.commit()
+
+            except Exception as e:
+                e_type, e_object, e_tb = sys.exc_info()
+                fname = os.path.split(e_tb.tb_frame.f_code.co_filename)[1]
+                print(e_type, fname, e_tb.tb_lineno)
 
             return redirect(url_for('upload_file',
                                     filename=filename))
@@ -123,14 +129,19 @@ def delete_file(path):
         flash("Oops - either the file does not exist, or you do not have permission for this action.")
         return redirect(url_for('home_page'))
 
-    # remove the chosen file physically from the file system
-    os.remove(os.path.join(app.config['UPLOAD_FOLDER'], chosen_file.filename))
+    try:
+        # remove the chosen file physically from the file system
+        os.remove(os.path.join(app.config['UPLOAD_FOLDER'], chosen_file.filename))
 
-    # remove the chosen file from the database
-    db.session.delete(chosen_file)
-    db.session.commit()
+        # remove the chosen file from the database
+        db.session.delete(chosen_file)
+        db.session.commit()
+        flash("File successfully deleted.")
 
-    flash("File successfully deleted.")
+    except Exception as e:
+        e_type, e_object, e_tb = sys.exc_info()
+        fname = os.path.split(e_tb.tb_frame.f_code.co_filename)[1]
+        print(e_type, fname, e_tb.tb_lineno)
     
     return redirect(url_for('home_page'))
 

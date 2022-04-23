@@ -150,6 +150,12 @@ def delete_file(path):
 def login_page(): 
     """ Display a page for user login to the application. """
     # if current user is already authenticated, load home page
+    
+    users = User.query.all()
+
+    for user in users:
+        print(user.username)
+
     if current_user.is_authenticated:
         return redirect(url_for('home_page'))
     form = LoginForm()

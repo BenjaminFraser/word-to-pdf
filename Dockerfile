@@ -12,35 +12,31 @@ RUN apt-get update && \
 		libreoffice-common \
 		openjdk-8-jre \
 		fonts-opensymbol \
-		hyphen-fr \
-		hyphen-de \
+		#hyphen-fr \
+		#hyphen-de \
 		hyphen-en-us \
-		hyphen-it \
-		hyphen-ru \
-		fonts-dejavu \
-		fonts-dejavu-core \
-		fonts-dejavu-extra \
-		fonts-droid-fallback \
-		fonts-dustin \
-		fonts-f500 \
-		fonts-fanwood \
-		fonts-freefont-ttf \
-		fonts-liberation \
-		fonts-lmodern \
-		fonts-lyx \
-		fonts-sil-gentium \
-		fonts-texgyre \
+		#hyphen-it \
+		#hyphen-ru \
+		#fonts-dejavu \
+		#fonts-dejavu-core \
+		#fonts-dejavu-extra \
+		#fonts-droid-fallback \
+		#fonts-dustin \
+		#fonts-f500 \
+		#fonts-fanwood \
+		#fonts-freefont-ttf \
+		#fonts-liberation \
+		#fonts-lmodern \
+		#fonts-lyx \
+		#fonts-sil-gentium \
+		#fonts-texgyre \
 		python3 \
 		python3-pip \
-		build-essential libssl-dev libffi-dev python-dev \
-		fonts-tlwg-purisa && \
+		#fonts-tlwg-purisa \
+		build-essential libssl-dev libffi-dev python-dev && \
 	apt-get -y -q remove libreoffice-gnome && \
 	apt -y autoremove && \
 	rm -rf /var/lib/apt/lists/*
-
-#RUN apt-get install -y python3 
-#RUN apt-get install -y python3-pip
-#RUN apt-get install -y build-essential libssl-dev libffi-dev python-dev
 
 RUN adduser --disabled-password wordtopdf
 

@@ -1,6 +1,15 @@
 # Word to PDF Document / Directory Conversion Application
 
+## Author: 
+- Ben Fraser, https://github.com/BenjaminFraser
+
+
+## Introduction / Overview
+
 A Python application implemented in Flask with LibreOffice backend to convert a large (or small) directory of word and excel documents into a single PDF document. The final PDF is ordered according to the names of the directories in the uploaded zip file, and each directory in-turn is ordered numberically by the files within.
+
+
+## Expected directory / file upload format
 
 For example, a typical .zip file with the expected directory structure might be the following:
 
@@ -25,10 +34,13 @@ This would generate a single PDF document with all of the files merged together 
 
 The web page has a basic login functionality provided using SQLAlchemy and flask_login. A dummy user script is provided in the repository just for development purposes, with the user and password: 'dummy'. This facilitates basic usage and testing of the application features locally.
 
+
+## Application examples
+
 Some examples of the interface are shown below.
 
 ![example image](examples/app_example_1.jpg?raw=True "Basic page layout of the app.")
 
-![example image 2](examples/app_example_1.jpg?raw=True "Basic page layout.")
+![example image 2](examples/app_example_2.jpg?raw=True "Basic page layout.")
 
-![example image 3](examples/app_example_1.jpg?raw=True "Basic page layout.")
+![example image 3](examples/app_example_3.jpg?raw=True "Basic page layout.")

@@ -1,6 +1,6 @@
 Flask==1.1.1
 PyPDF2==1.27.5
-werkzeug==0.15.6
+werkzeug==2.2.3
 flask_bootstrap==3.3.7.1
 flask_wtf==0.14.2
 flask-sqlalchemy==2.4.1
